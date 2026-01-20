@@ -1,0 +1,3 @@
+[submodule "vim_conf/.vim/pack/vendor/start/vim-smoothie"]
+	path = vim_conf/.vim/pack/vendor/start/vim-smoothie
+	url = https://github.com/psliwka/vim-smoothie.git
