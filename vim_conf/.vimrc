@@ -2,6 +2,9 @@ syntax on
 filetype on
 filetype plugin on
 filetype indent on
+" set clipboard to system clipboard
+set clipboard=unnamed
+
 set relativenumber
 " Enable auto completion menu after pressing TAB.
 set wildmenu
@@ -25,3 +28,7 @@ let NERDTreeShowHidden=1
 " Start NERDTree when Vim is started without file arguments.
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+
+" Add text highligh in search in real time typing
+set hlsearch
+set incsearch
