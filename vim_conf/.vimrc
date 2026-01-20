@@ -32,3 +32,9 @@ autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
 " Add text highligh in search in real time typing
 set hlsearch
 set incsearch
+
+
+
+" Add smooth scrolling
+
+
