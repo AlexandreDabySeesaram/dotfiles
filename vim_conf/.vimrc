@@ -6,13 +6,17 @@ filetype indent on
 set clipboard=unnamed
 
 set relativenumber
+
+
 " Enable auto completion menu after pressing TAB.
 set wildmenu
 
 " Make wildmenu behave like similar to Bash completion.
-set wildmode=list:longest
+" set wildmode=list:longest
+set wildmode=longest:full,full
 
-"Set default clip register to be unamed (system) register
+" Provides tab-completion for all file-related tasks
+set path+=**
 
 "colorscheme lunaperche
 colorscheme habamax
@@ -44,3 +48,18 @@ if exists('$CONDA_PREFIX')
         let g:jedi#environment_path = s:conda_python
     endif
 endif
+
+
+" personalise status bar
+
+" Always show status bar
+set laststatus=2
+"
+" " Format the status line
+set statusline=
+set statusline+=%f        " Path to the file
+set statusline+=\ [%M]    " Modified flag [+]
+set statusline+=%=        " Switch to the right side
+set statusline+=%l/%L     " Current line / Total lines
+set statusline+=\ (%p%%)  " Percentage through file
+
