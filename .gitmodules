@@ -1,3 +1,6 @@
 [submodule "vim_conf/.vim/pack/vendor/start/vim-smoothie"]
 	path = vim_conf/.vim/pack/vendor/start/vim-smoothie
 	url = https://github.com/psliwka/vim-smoothie.git
+[submodule "vim_conf/.vim/pack/vendor/start/jedi-vim"]
+	path = vim_conf/.vim/pack/vendor/start/jedi-vim
+	url = https://github.com/davidhalter/jedi-vim.git
