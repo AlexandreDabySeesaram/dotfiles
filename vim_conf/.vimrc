@@ -34,7 +34,13 @@ set hlsearch
 set incsearch
 
 
-
-" Add smooth scrolling
-
-
+" Check if a Conda environment is active
+if exists('$CONDA_PREFIX')
+    " For Linux/macOS, the binary is in /bin/
+    let s:conda_python = $CONDA_PREFIX . '/bin/python'
+    
+    " Check if the file actually exists before setting it
+    if filereadable(s:conda_python)
+        let g:jedi#environment_path = s:conda_python
+    endif
+endif
