@@ -7,6 +7,12 @@ set clipboard=unnamed
 
 set relativenumber
 
+" esc in insert & visual mode
+inoremap kj <esc>
+vnoremap kj <esc>
+"
+" " esc in command mode
+cnoremap kj <C-C>
 
 " Enable auto completion menu after pressing TAB.
 set wildmenu
