@@ -1,3 +1,4 @@
+set nocompatible
 syntax on
 filetype on
 filetype plugin on
@@ -69,3 +70,14 @@ set statusline+=%=        " Switch to the right side
 set statusline+=%l/%L     " Current line / Total lines
 set statusline+=\ (%p%%)  " Percentage through file
 
+
+" set vimwiki to handle markdown files in a Logseq compatible way
+
+let g:vimwiki_list = [{
+  \ 'path': '~/Documents/LogSeq/pages',
+  \ 'syntax': 'markdown',
+  \ 'ext': '.md'
+  \ }]
+
+" Prevent Vimwiki from treating every .md file on your system as a wiki
+let g:vimwiki_global_ext = 0

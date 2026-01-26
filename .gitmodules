@@ -4,3 +4,6 @@
 [submodule "vim_conf/.vim/pack/vendor/start/jedi-vim"]
 	path = vim_conf/.vim/pack/vendor/start/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim.git
+[submodule "vim_conf/.vim/pack/vendor/start/vimwiki"]
+	path = vim_conf/.vim/pack/vendor/start/vimwiki
+	url = https://github.com/vimwiki/vimwiki.git
