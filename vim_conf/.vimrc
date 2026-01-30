@@ -78,6 +78,23 @@ endif
 
 " personalise status bar
 
+" When using lightline, remove the redundant info
+set noshowmode
+
+"set theme for lightline"
+" let g:lightline = {
+	      \ 'colorscheme': 'wombat',
+	            \ }
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'readonly', 'absolutepath', 'modified' ] ]
+      \ }
+      \ }
+
+
 " Always show status bar
 set laststatus=2
 "
