@@ -8,6 +8,9 @@ set clipboard=unnamed
 
 set relativenumber
 
+" Press F2 to toggle paste mode
+set pastetoggle=<F2>
+
 " esc in insert & visual mode
 inoremap kj <esc>
 vnoremap kj <esc>
@@ -28,6 +31,17 @@ set path+=**
 "colorscheme lunaperche
 colorscheme habamax
 
+
+"Use automatic closing of matching brackets
+
+inoremap " ""<left>
+inoremap ' ''<left>
+inoremap ( ()<left>
+inoremap [ []<left>
+inoremap { {}<left>
+inoremap {<CR> {<CR>}<ESC>O
+
+
 "NERDTree toggles
 nnoremap <leader>p :NERDTreeToggle<CR>
 noremap <C-J> <C-W>j
@@ -35,10 +49,10 @@ noremap <C-K> <C-W>k
 noremap <C-H> <C-W>h
 noremap <C-L> <C-W>l
 
-let NERDTreeShowHidden=1
+let NERDTreeShowHidden=1 ""Let show hidden files in the nerdtree window 
 " Start NERDTree when Vim is started without file arguments.
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
+" "autocmd StdinReadPre * let s:std_in=1
+" "autocmd VimEnter * if argc() == 0 && !exists('s:std_in') | NERDTree | endif
 
 " Add text highligh in search in real time typing
 set hlsearch
@@ -76,8 +90,15 @@ set statusline+=\ (%p%%)  " Percentage through file
 let g:vimwiki_list = [{
   \ 'path': '~/Documents/LogSeq/pages',
   \ 'syntax': 'markdown',
-  \ 'ext': '.md'
+  \ 'ext': '.md',
+  \ 'diary_rel_path': '../diary/',
   \ }]
-
+" Set directory change automatically in vimwikik
+""let g:vimwiki_auto_chdir = 1
+" Set directory change automatically in vim altogether
+set autochdir
+" Let vimwiki auto complete file name within pages/ directory from diary directory
+" as well
+autocmd FileType vimwiki setlocal path+=~/Documents/LogSeq/pages/**
 " Prevent Vimwiki from treating every .md file on your system as a wiki
 let g:vimwiki_global_ext = 0

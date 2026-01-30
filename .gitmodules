@@ -7,3 +7,6 @@
 [submodule "vim_conf/.vim/pack/vendor/start/vimwiki"]
 	path = vim_conf/.vim/pack/vendor/start/vimwiki
 	url = https://github.com/vimwiki/vimwiki.git
+[submodule "vim_conf/vim_conf/.vim/pack/vendor/start/Colorizer"]
+	path = vim_conf/vim_conf/.vim/pack/vendor/start/Colorizer
+	url = https://github.com/chrisbra/Colorizer
