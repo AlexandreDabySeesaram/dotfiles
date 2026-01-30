@@ -10,3 +10,6 @@
 [submodule "vim_conf/vim_conf/.vim/pack/vendor/start/Colorizer"]
 	path = vim_conf/.vim/pack/vendor/start/Colorizer
 	url = https://github.com/chrisbra/Colorizer
+[submodule "vim_conf/vim_conf/.vim/pack/vendor/start/lightline"]
+	path = vim_conf/vim_conf/.vim/pack/vendor/start/lightline
+	url = https://github.com/itchyny/lightline.vim

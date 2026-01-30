@@ -32,6 +32,11 @@ set path+=**
 colorscheme habamax
 
 
+" Use colour highlighting in vim for hex or rgb code automatically for all
+" filetypes
+let g:colorizer_auto_filetype='*'
+"":let g:colorizer_auto_color = 1
+
 "Use automatic closing of matching brackets
 
 inoremap " ""<left>
