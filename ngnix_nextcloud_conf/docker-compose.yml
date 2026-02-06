@@ -22,6 +22,50 @@ services:
       - app-network
 
 
+
+
+  db_marion:
+    image: postgres:15
+    container_name: otree_db
+    restart: always
+    environment:
+      - POSTGRES_DB=otree
+      - POSTGRES_USER=otree
+      - POSTGRES_PASSWORD=otree_secret_pass
+    volumes:
+      - ./otree_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network # Same network as your NPM container
+
+  otree:
+    build:
+      context: ../marion-otree/irr_survey # Path to your project folder
+      dockerfile: Dockerfile     # Look for Dockerfile inside that folder
+    container_name: otree_app
+    environment:
+      - DATABASE_URL=postgres://otree:otree_secret_pass@db_marion:5432/otree
+      - OTREE_ADMIN_PASSWORD=${OTREE_PWD}
+      - OTREE_AUTH_LEVEL=STUDY
+      - OTREE_PRODUCTION=1
+    depends_on:
+      - db_marion
+    networks:
+      - app-network # Same network as your NPM container
+
+
+
+
+
+  marion_otree:
+    image: nginx:alpine
+    container_name: marion-otree-web 
+    restart: unless-stopped
+    volumes:
+      - ${WEBSITE_MARION_PATH}:/usr/share/nginx/html:ro
+    networks:
+      - app-network
+
+
   db:
     image: mariadb:10.11
     container_name: nextcloud-db
@@ -60,6 +104,46 @@ services:
       - ${HOMES_PATH}:/host_homes
     networks:
       - app-network
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - SIGNUPS_ALLOWED=false      # Set to false AFTER creating an account
+      - DOMAIN=https://pwd.dabrion.eu
+    volumes:
+      - ./vw-data:/data
+    expose:
+      - 80                  # Main Web UI
+    networks:
+      - app-network   
+ 
+  wg-easy:
+    container_name: wireguard
+    image: ghcr.io/wg-easy/wg-easy:latest
+    restart: unless-stopped
+    environment:
+      - WG_HOST=vpn.dabrion.eu       
+      # - PASSWORD_HASH=${WG_PASSWORD_HASH}      # Web UI password
+      - PASSWORD_HASH=$$2a$$12$$/Q7ju2lt06eQn0Jgp2oZ.O9bbXWunb.ikvfk5uiVPLGBnurlSF6ua
+    volumes:
+      - ./wireguard:/etc/wireguard   # Where client configs are stored
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    # expose:
+    #   - "51821"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    networks:
+      - app-network                  
+      
+    
 networks:
   app-network:
     driver: bridge
