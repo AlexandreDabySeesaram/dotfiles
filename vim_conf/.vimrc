@@ -6,6 +6,7 @@ filetype indent on
 " set clipboard to system clipboard
 set clipboard=unnamed
 
+set number " get the 0 to be the actual line number
 set relativenumber
 
 " Press F2 to toggle paste mode
