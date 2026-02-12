@@ -10,7 +10,7 @@ set number " get the 0 to be the actual line number
 set relativenumber
 
 " Press F2 to toggle paste mode
-set pastetoggle=<F2>
+set pastetoggle=<Leader>o
 
 " esc in insert & visual mode
 inoremap kj <esc>
