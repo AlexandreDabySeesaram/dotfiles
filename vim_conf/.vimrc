@@ -108,6 +108,17 @@ set statusline+=%l/%L     " Current line / Total lines
 set statusline+=\ (%p%%)  " Percentage through file
 
 
+
+" folds in markdown and quarto markdown
+augroup QuartoFolding
+  autocmd!
+  autocmd FileType markdown,quarto setlocal foldmethod=expr
+  autocmd FileType markdown,quarto setlocal foldexpr=getline(v:lnum)=~'^##'?'>1':'='
+  " This ensures folds are open when you open the file
+  autocmd FileType markdown,quarto setlocal foldlevel=99
+augroup END
+
+
 " set vimwiki to handle markdown files in a Logseq compatible way
 
 let g:vimwiki_list = [{
