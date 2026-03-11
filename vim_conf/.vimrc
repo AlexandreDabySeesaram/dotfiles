@@ -4,7 +4,19 @@ filetype on
 filetype plugin on
 filetype indent on
 " set clipboard to system clipboard
-set clipboard=unnamed
+"set clipboard=unnamed
+
+if has('clipboard')
+  if has('unnamedplus')
+    set clipboard=unnamedplus
+  else
+    set clipboard=unnamed
+  endif
+endif
+
+
+
+
 
 set number " get the 0 to be the actual line number
 set relativenumber
