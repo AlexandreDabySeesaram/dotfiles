@@ -21,12 +21,51 @@ services:
     networks:
       - app-network
 
+  db_marion:
+    image: postgres:15
+    container_name: otree_db
+    restart: always
+    environment:
+      - POSTGRES_DB=otree
+      - POSTGRES_USER=otree
+      - POSTGRES_PASSWORD=otree_secret_pass
+    volumes:
+      - ./otree_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network # Same network as your NPM container
+
+  otree:
+    build:
+      context: ../marion-otree/irr_survey # Path to your project folder
+      dockerfile: Dockerfile     # Look for Dockerfile inside that folder
+    container_name: otree_app
+    environment:
+      - DATABASE_URL=postgres://otree:otree_secret_pass@db_marion:5432/otree
+      - OTREE_ADMIN_PASSWORD=${OTREE_PWD}
+      - OTREE_AUTH_LEVEL=STUDY
+      - OTREE_PRODUCTION=1
+    depends_on:
+      - db_marion
+    networks:
+      - app-network # Same network as your NPM container
+
+
+  marion_otree:
+    image: nginx:alpine
+    container_name: marion-otree-web 
+    restart: unless-stopped
+    volumes:
+      - ${WEBSITE_MARION_PATH}:/usr/share/nginx/html:ro
+    networks:
+      - app-network
+
 
   db:
     image: mariadb:10.11
     container_name: nextcloud-db
     restart: unless-stopped
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    # command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-buffer-pool-size=1G --innodb-log-file-size=256M --query-cache-type=0 --query-cache-size=0
     volumes:
       - ./db_data:/var/lib/mysql
     environment:
@@ -34,6 +73,14 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    container_name: nextcloud-redis
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru
     networks:
       - app-network
 
@@ -46,6 +93,7 @@ services:
     depends_on:
       - db
     environment:
+      - REDIS_HOST=redis
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
@@ -60,6 +108,162 @@ services:
       - ${HOMES_PATH}:/host_homes
     networks:
       - app-network
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - SIGNUPS_ALLOWED=false      # Set to false AFTER creating an account
+      - DOMAIN=https://pwd.dabrion.eu
+    volumes:
+      - ./vw-data:/data
+    expose:
+      - 80                  # Main Web UI
+    networks:
+      - app-network   
+ 
+  wg-easy:
+    container_name: wireguard
+    image: ghcr.io/wg-easy/wg-easy:latest
+    restart: unless-stopped
+    environment:
+      - WG_HOST=vpn.dabrion.eu       
+      # - PASSWORD_HASH=${WG_PASSWORD_HASH}      # Web UI password
+      - PASSWORD_HASH=$$2a$$12$$/Q7ju2lt06eQn0Jgp2oZ.O9bbXWunb.ikvfk5uiVPLGBnurlSF6ua
+    volumes:
+      - ./wireguard:/etc/wireguard   # Where client configs are stored
+    ports:
+      - "51820:51820/udp"
+      - "51821:51821/tcp"
+    # expose:
+    #   - "51821"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    networks:
+      - app-network                  
+      
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    restart: unless-stopped
+    expose:
+      - 80
+    volumes:
+      - ~/storage/eBooks/audiobooks:/audiobooks
+      - ~/storage/eBooks/books:/ebooks
+      - ./config/abs/config:/config
+      - ./config/abs/metadata:/metadata
+    environment:
+      - TZ=Europe/Paris          # Corrected for your location
+        # - PUID=1000                # Your Debian User ID
+        # - PGID=1000                # Your Debian Group ID
+    networks:
+      - app-network   
+
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-serve:latest
+    container_name: kiwix-wikipedia
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - /home/daby/storage/kiwix-wikipedia:/data
+    networks:
+      - app-network   
+    command:
+      - "*.zim"
+
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    networks:
+      - app-network
+    volumes:
+      - ./jellyfin_config:/config
+      - /home/daby/storage/jellyfin_media:/media
+    restart: unless-stopped
+
+    
+
+
+
+  bentopdf:
+    image: ghcr.io/alam00000/bentopdf:latest
+    container_name: bentopdf
+    restart: unless-stopped
+    networks:
+      - app-network
+
+
+
+        #   homeassistant:
+        #     container_name: homeassistant
+        #     image: "ghcr.io/home-assistant/home-assistant:stable"
+        #     volumes:
+        #       - ./homeassistant/config:/config
+        #       - /etc/localtime:/etc/localtime:ro
+        #     restart: unless-stopped
+        #     privileged: true
+        #     network_mode: host # Recommended for device discovery
+        # 
+        # 
+        #   music-assistant:
+        #     image: ghcr.io/music-assistant/server:latest
+        #     container_name: music-assistant
+        #     restart: unless-stopped
+        #     network_mode: host
+        #     volumes:
+        #       - ./ma-data:/data
+        #         #- /path/to/music:/music:ro  # Optional: mount  local music library
+        #     cap_add:
+        #       - DAC_READ_SEARCH
+        #       - SYS_ADMIN
+        #     security_opt:
+        #       - apparmor:unconfined
+        #     environment:
+        #      # Provide logging level as environment variable.
+        #      # default=info, possible=(critical, error, warning, info, debug)
+        #      - LOG_LEVEL=info 
+
+        # 
+        #   whisper:
+        #     container_name: whisper
+        #     image: rhasspy/wyoming-whisper
+        #       #command: --model tiny-int8 --language en
+        #     command: --model base-int8 --language en
+        #     volumes:
+        #       - ./whisper-data:/data
+        #     environment:
+        #       - TZ=Europe/Paris  
+        #     restart: unless-stopped
+        #     ports:
+        #       - "10300:10300"
+        #     networks:
+        #       - app-network  
+        # 
+        #   
+        #   piper:
+        #     container_name: piper
+        #     image: rhasspy/wyoming-piper
+        #     # Using 'southern_english_female-low' for a natural British accent
+        #     command: --voice en_GB-southern_english_female-low
+        #     volumes:
+        #       - ./piper-data:/data
+        #     environment:
+        #       - TZ=Europe/Paris
+        #     restart: unless-stopped
+        #     ports:
+        #       - "10200:10200"
+        #     networks:
+        #         - app-network
+        # 
+
 networks:
   app-network:
     driver: bridge
