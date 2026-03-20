@@ -21,6 +21,11 @@ services:
     networks:
       - app-network
 
+
+
+
+# =============== MARION =============================
+
   db_marion:
     image: postgres:15
     container_name: otree_db
@@ -59,6 +64,9 @@ services:
     networks:
       - app-network
 
+
+
+# =============== DATA =============================
 
   db:
     image: mariadb:10.11
@@ -109,6 +117,12 @@ services:
     networks:
       - app-network
 
+      
+
+
+
+# =============== SECURITY =============================
+
   vaultwarden:
     image: vaultwarden/server:latest
     container_name: vaultwarden
@@ -147,6 +161,8 @@ services:
     networks:
       - app-network                  
       
+# =============== MEDIA =============================
+
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
     container_name: audiobookshelf
@@ -190,8 +206,10 @@ services:
     restart: unless-stopped
 
     
+# =============== COMMUNICATIONS =============================
 
 
+# =============== PDF =============================
 
   bentopdf:
     image: ghcr.io/alam00000/bentopdf:latest
@@ -200,69 +218,6 @@ services:
     networks:
       - app-network
 
-
-
-        #   homeassistant:
-        #     container_name: homeassistant
-        #     image: "ghcr.io/home-assistant/home-assistant:stable"
-        #     volumes:
-        #       - ./homeassistant/config:/config
-        #       - /etc/localtime:/etc/localtime:ro
-        #     restart: unless-stopped
-        #     privileged: true
-        #     network_mode: host # Recommended for device discovery
-        # 
-        # 
-        #   music-assistant:
-        #     image: ghcr.io/music-assistant/server:latest
-        #     container_name: music-assistant
-        #     restart: unless-stopped
-        #     network_mode: host
-        #     volumes:
-        #       - ./ma-data:/data
-        #         #- /path/to/music:/music:ro  # Optional: mount  local music library
-        #     cap_add:
-        #       - DAC_READ_SEARCH
-        #       - SYS_ADMIN
-        #     security_opt:
-        #       - apparmor:unconfined
-        #     environment:
-        #      # Provide logging level as environment variable.
-        #      # default=info, possible=(critical, error, warning, info, debug)
-        #      - LOG_LEVEL=info 
-
-        # 
-        #   whisper:
-        #     container_name: whisper
-        #     image: rhasspy/wyoming-whisper
-        #       #command: --model tiny-int8 --language en
-        #     command: --model base-int8 --language en
-        #     volumes:
-        #       - ./whisper-data:/data
-        #     environment:
-        #       - TZ=Europe/Paris  
-        #     restart: unless-stopped
-        #     ports:
-        #       - "10300:10300"
-        #     networks:
-        #       - app-network  
-        # 
-        #   
-        #   piper:
-        #     container_name: piper
-        #     image: rhasspy/wyoming-piper
-        #     # Using 'southern_english_female-low' for a natural British accent
-        #     command: --voice en_GB-southern_english_female-low
-        #     volumes:
-        #       - ./piper-data:/data
-        #     environment:
-        #       - TZ=Europe/Paris
-        #     restart: unless-stopped
-        #     ports:
-        #       - "10200:10200"
-        #     networks:
-        #         - app-network
-        # 
 
 networks:
   app-network:
